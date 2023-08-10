@@ -1,8 +1,6 @@
 const fs = require("fs/promises");
 const path = require("path");
 
-const HttpError = require("../helpers/HttpError");
-
 const contactsPath = path.join(__dirname, "contacts.json");
 
 const listContacts = async () => {
