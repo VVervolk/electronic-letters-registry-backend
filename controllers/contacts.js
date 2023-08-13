@@ -1,6 +1,5 @@
 const contacts = require("../models/contacts");
 const { HttpError, ctrlWrapper } = require("../helpers");
-const { addSchema, updateSchema } = require("../schemas/contacts");
 
 async function getAll(req, res) {
   const contactsAll = await contacts.listContacts();
@@ -16,10 +15,6 @@ async function getByID(req, res) {
 }
 
 async function addContact(req, res) {
-  const { error } = addSchema.validate(req.body);
-  if (error) {
-    throw HttpError(400, error.message);
-  }
   const newContact = await contacts.addContact(req.body);
   res.status(201).json(newContact);
 }
@@ -33,11 +28,6 @@ async function deleteContact(req, res) {
 }
 
 async function updateContact(req, res) {
-  const { error } = updateSchema.validate(req.body);
-  if (error) {
-    throw HttpError(400, error.message);
-  }
-
   const updatedContact = await contacts.updateContact(req.params, req.body);
   if (!updatedContact) {
     throw HttpError(404, "Not found");
