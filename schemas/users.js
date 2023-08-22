@@ -45,4 +45,14 @@ const schemaUser = Joi.object({
   subscription: Joi.string().valid(...SUB_TYPE),
 });
 
-module.exports = { schemaUser, User };
+const schemaSub = Joi.object({
+  subscription: Joi.string()
+    .valid(...SUB_TYPE)
+    .messages({
+      "any.only": "wrong type of subscription",
+    }),
+});
+
+const schemas = { schemaUser, schemaSub };
+
+module.exports = { schemas, User };

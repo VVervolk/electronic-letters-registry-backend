@@ -57,7 +57,30 @@ async function login(req, res) {
   });
 }
 
+async function logout(req, res) {
+  const { _id } = req.user;
+  await User.findByIdAndUpdate(_id, { token: "" });
+  res.status(204).send();
+}
+
+async function current(req, res) {
+  const { email, subscription } = req.user;
+  res.status(200).json({ email, subscription });
+}
+
+async function subUpdate(req, res) {
+  const { _id } = req.user;
+  const { subscription: newSub } = req.body;
+  const { email, subscription } = await User.findByIdAndUpdate(_id, {
+    newSub,
+  });
+  res.status(200).json({ email, subscription });
+}
+
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
+  logout: ctrlWrapper(logout),
+  current: ctrlWrapper(current),
+  subUpdate: ctrlWrapper(subUpdate),
 };
