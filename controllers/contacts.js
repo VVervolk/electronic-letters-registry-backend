@@ -6,12 +6,10 @@ async function getAll(req, res) {
   const { _id: owner } = req.user;
   const { page = 1, limit = 10, favorite = null } = req.query;
   const skip = (page - 1) * limit;
-  let contactsAll = [];
-  if (favorite !== null) {
-    contactsAll = await Contact.find({ owner, favorite }, {}, { skip, limit });
-  } else {
-    contactsAll = await Contact.find({ owner }, {}, { skip, limit });
-  }
+  const query = favorite === null ? { owner } : { owner, favorite };
+
+  const contactsAll = await Contact.find(query, {}, { skip, limit });
+
   res.status(200).json(contactsAll);
 }
 
