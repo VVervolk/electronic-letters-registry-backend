@@ -3,7 +3,13 @@ const { Contact } = require("../schemas/contacts");
 const { HttpError, ctrlWrapper } = require("../helpers");
 
 async function getAll(req, res) {
-  const contactsAll = await Contact.find();
+  const { _id: owner } = req.user;
+  const { page = 1, limit = 10, favorite = null } = req.query;
+  const skip = (page - 1) * limit;
+  const query = favorite === null ? { owner } : { owner, favorite };
+
+  const contactsAll = await Contact.find(query, {}, { skip, limit });
+
   res.status(200).json(contactsAll);
 }
 
@@ -17,7 +23,8 @@ async function getByID(req, res) {
 }
 
 async function addContact(req, res) {
-  const newContact = await Contact.create(req.body);
+  const { _id: owner } = req.user;
+  const newContact = await Contact.create({ ...req.body, owner });
   res.status(201).json(newContact);
 }
 
