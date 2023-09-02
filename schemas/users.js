@@ -26,7 +26,17 @@ const userSchema = new Schema(
       default: null,
     },
     avatarURL: String,
+
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      required: [true, "Verify token is required"],
+    },
   },
+
   { versionKey: false }
 );
 
@@ -54,6 +64,13 @@ const schemaSub = Joi.object({
     }),
 });
 
-const schemas = { schemaUser, schemaSub };
+const schemaEmail = Joi.object({
+  email: Joi.string().email().required().messages({
+    "any.required": "missing required field email",
+    "string.email": "invalid email",
+  }),
+});
+
+const schemas = { schemaUser, schemaSub, schemaEmail };
 
 module.exports = { schemas, User };
