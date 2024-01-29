@@ -1,48 +1,42 @@
-const { Schema, model } = require("mongoose");
-const { handleMongooseError } = require("../helpers");
-
 const Joi = require("joi");
 
-const SUB_TYPE = ["starter", "pro", "business"];
+const seq = require("../server");
+// const SUB_TYPE = ["starter", "pro", "business"];
 
-const userSchema = new Schema(
+const User = seq.define(
+  "User",
   {
-    password: {
-      type: String,
-      required: [true, "Password is required"],
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     email: {
-      type: String,
-      required: [true, "Email is required"],
-      unique: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    subscription: {
-      type: String,
-      enum: SUB_TYPE,
-      default: "starter",
+    password: {
+      type: DataTypes.STRING.BINARY,
+      allowNull: false,
+    },
+    unitId: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+    },
+    userTypeId: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
     },
     token: {
-      type: String,
-      default: null,
-    },
-    avatarURL: String,
-
-    verify: {
-      type: Boolean,
-      default: false,
-    },
-    verificationToken: {
-      type: String,
-      required: [true, "Verify token is required"],
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
-
-  { versionKey: false }
+  {}
 );
-
-const User = model("user", userSchema);
-
-userSchema.post("save", handleMongooseError);
 
 const schemaUser = Joi.object({
   password: Joi.string().required().min(6).messages({
@@ -53,23 +47,16 @@ const schemaUser = Joi.object({
     "any.required": "missing required email field",
     "string.email": "invalid email",
   }),
-  subscription: Joi.string().valid(...SUB_TYPE),
+  // subscription: Joi.string().valid(...SUB_TYPE),
 });
 
-const schemaSub = Joi.object({
-  subscription: Joi.string()
-    .valid(...SUB_TYPE)
-    .messages({
-      "any.only": "wrong type of subscription",
-    }),
-});
-
-const schemaEmail = Joi.object({
-  email: Joi.string().email().required().messages({
-    "any.required": "missing required field email",
-    "string.email": "invalid email",
-  }),
-});
+// const schemaSub = Joi.object({
+//   subscription: Joi.string()
+//     .valid(...SUB_TYPE)
+//     .messages({
+//       "any.only": "wrong type of subscription",
+//     }),
+// });
 
 const schemas = { schemaUser, schemaSub, schemaEmail };
 

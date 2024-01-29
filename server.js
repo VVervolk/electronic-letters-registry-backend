@@ -1,18 +1,21 @@
-const mongoose = require("mongoose");
+const Sequelize = require("sequelize");
 
 const app = require("./app");
 
-const { DB_HOST, PORT = 3000 } = process.env;
+const { DB_HOST, USERNAME, DB_NAME, DB_PORT, PORT = 3000 } = process.env;
 
-mongoose.set("strictQuery", true);
+const sequelize = new Sequelize(DB_NAME, "root", "", {
+  host: DB_HOST,
+  port: DB_PORT,
+  dialect: "mariadb",
+});
 
-mongoose
-  .connect(DB_HOST)
+sequelize
+  .authenticate()
   .then(() => {
     app.listen(PORT);
-    console.log("Database connection successful");
+    console.log("Connected.");
   })
-  .catch((error) => {
-    console.log(error.message);
-    process.exit(1);
-  });
+  .catch((err) => console.error("Connection error: ", err));
+
+module.exports = sequelize;
