@@ -1,9 +1,13 @@
-const Joi = require("joi");
+const { DB_HOST, USERNAME, DB_NAME, DB_PORT, PORT = 3000 } = process.env;
+const { Sequelize, DataTypes } = require("sequelize");
 
-const seq = require("../server");
-// const SUB_TYPE = ["starter", "pro", "business"];
+const sequelize = new Sequelize(DB_NAME, "root", "", {
+  host: DB_HOST,
+  port: DB_PORT,
+  dialect: "mariadb",
+});
 
-const User = seq.define(
+const User = sequelize.define(
   "User",
   {
     firstName: {
@@ -17,6 +21,7 @@ const User = seq.define(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: { isEmail: true },
     },
     password: {
       type: DataTypes.STRING.BINARY,
@@ -25,39 +30,20 @@ const User = seq.define(
     unitId: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
+      validate: { isNumeric: true },
     },
     userTypeId: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
+      validate: { isNumeric: true },
     },
     token: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
   },
-  {}
+  { timestamps: false }
 );
 
-const schemaUser = Joi.object({
-  password: Joi.string().required().min(6).messages({
-    "any.required": "missing required password field",
-    "string.min": "password length must be at least 6 characters long",
-  }),
-  email: Joi.string().email().required().messages({
-    "any.required": "missing required email field",
-    "string.email": "invalid email",
-  }),
-  // subscription: Joi.string().valid(...SUB_TYPE),
-});
+sequelize.sync();
 
-// const schemaSub = Joi.object({
-//   subscription: Joi.string()
-//     .valid(...SUB_TYPE)
-//     .messages({
-//       "any.only": "wrong type of subscription",
-//     }),
-// });
-
-const schemas = { schemaUser, schemaSub, schemaEmail };
-
-module.exports = { schemas, User };
+module.exports = { User };

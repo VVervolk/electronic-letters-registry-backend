@@ -11,29 +11,6 @@ const { HttpError, ctrlWrapper, sendEmail } = require("../helpers");
 
 const { SECRET_KEY } = process.env;
 
-async function register(req, res) {
-  const { password, email } = req.body;
-  const user = await User.findOne({ email });
-
-  if (user) {
-    throw HttpError(409, "Email in use");
-  }
-
-  const hashPassword = await bcrypt.hash(password, 10);
-  const verificationToken = crypto.randomUUID();
-
-  const { subscription } = await User.create({
-    ...req.body,
-    password: hashPassword,
-    avatarURL,
-    verificationToken,
-  });
-
-  res.status(201).json({
-    user: { email, subscription },
-  });
-}
-
 async function login(req, res) {
   const { password, email } = req.body;
   const user = await User.findOne({ email });
@@ -85,36 +62,9 @@ async function subUpdate(req, res) {
   res.status(200).json({ email, subscription });
 }
 
-async function avatarUpdate(req, res) {
-  const { _id } = req.user;
-  const { path: tempUpload, originalname } = req.file;
-
-  let normalizedAvatar;
-  try {
-    const image = await Jimp.read(tempUpload);
-    normalizedAvatar = image.resize(250, 250).write(tempUpload);
-  } catch (error) {
-    console.log(error);
-  }
-  const filename = `${_id}_${originalname}`;
-  const resultUpload = path.join(avatarsDir, filename);
-
-  await fs.rename(tempUpload, resultUpload);
-
-  const avatarURL = path.join("avatars", filename);
-  await User.findByIdAndUpdate(_id, { avatarURL });
-  console.log(avatarURL);
-
-  res.status(200).json({
-    avatarURL,
-  });
-}
-
 module.exports = {
-  register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   logout: ctrlWrapper(logout),
   current: ctrlWrapper(current),
   subUpdate: ctrlWrapper(subUpdate),
-  avatarUpdate: ctrlWrapper(avatarUpdate),
 };
