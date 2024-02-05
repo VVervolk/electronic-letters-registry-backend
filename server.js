@@ -17,5 +17,3 @@ sequelize
     console.log(`Connected with port ${PORT}`);
   })
   .catch((err) => console.error("Connection error: ", err));
-
-module.exports = sequelize;

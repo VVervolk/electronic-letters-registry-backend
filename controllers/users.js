@@ -5,7 +5,7 @@ const Jimp = require("jimp");
 const fs = require("fs/promises");
 const crypto = require("node:crypto");
 
-const { User } = require("../schemas/users");
+const { User } = require("../models/users");
 
 const { HttpError, ctrlWrapper, sendEmail } = require("../helpers");
 
@@ -28,13 +28,16 @@ async function addUser(req, res) {
   const password = crypto.randomUUID().slice(0, 8);
   const hashPassword = await bcrypt.hash(password, 10);
 
+  console.log(typeof hashPassword);
+
   const newUser = await User.create({
     ...req.body,
     password: hashPassword,
   });
 
   res.status(201).json({
-    user: newUser,
+    email: userEmail,
+    password: password,
   });
 }
 

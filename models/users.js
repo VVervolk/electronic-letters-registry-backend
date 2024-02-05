@@ -1,6 +1,9 @@
 const { DB_HOST, USERNAME, DB_NAME, DB_PORT, PORT = 3000 } = process.env;
 const { Sequelize, DataTypes } = require("sequelize");
 
+const Unit = require("./units");
+const UsersType = require("./userstypes");
+
 const sequelize = new Sequelize(DB_NAME, "root", "", {
   host: DB_HOST,
   port: DB_PORT,
@@ -10,6 +13,11 @@ const sequelize = new Sequelize(DB_NAME, "root", "", {
 const User = sequelize.define(
   "User",
   {
+    id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      primaryKey: true,
+    },
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -31,6 +39,10 @@ const User = sequelize.define(
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       validate: { isNumeric: true },
+      references: {
+        model: Unit,
+        key: "unitName",
+      },
     },
     userTypeId: {
       type: DataTypes.INTEGER.UNSIGNED,
@@ -44,6 +56,9 @@ const User = sequelize.define(
   { timestamps: false }
 );
 
+User.belongsTo(Unit, { foreignKey: "unitId", as: "unit" });
+User.belongsTo(UsersType, { foreignKey: "userTypeId", as: "userType" });
+
 sequelize.sync();
 
-module.exports = { User };
+module.exports = User;
