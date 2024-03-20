@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/users");
+const Unit = require("../models/units");
+const UsersType = require("../models/userstypes");
 
 const { HttpError } = require("../helpers");
 
@@ -14,10 +16,17 @@ async function authenticate(req, res, next) {
   }
   try {
     const { id } = jwt.verify(token, SECRET_KEY);
-    const user = await User.findOne({ where: { id } });
+    const user = await User.findOne({
+      where: { id },
+      include: [
+        { model: Unit, as: "unit" },
+        { model: UsersType, as: "userType" },
+      ],
+    });
     if (!user || !user.token || user.token !== token) {
       next(HttpError(401, "Not authorized"));
     }
+
     req.user = user;
     next();
   } catch {

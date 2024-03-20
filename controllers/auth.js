@@ -70,14 +70,14 @@ async function logout(req, res) {
 }
 
 async function current(req, res) {
-  const { id, firstName, lastName, email, unitId, userTypeId } = req.user;
+  const { id, firstName, lastName, email, unit, userType } = req.user;
   res.status(200).json({
     user: {
       id: id,
       email: email,
       fullName: `${firstName} ${lastName}`,
-      unit: unitId,
-      userType: userTypeId,
+      unit: unit.dataValues.unitName,
+      userType: userType.dataValues.typeName,
     },
   });
 }
