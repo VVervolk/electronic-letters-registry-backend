@@ -1,14 +1,9 @@
-const Sequelize = require("sequelize");
+require("dotenv").config();
+const sequelize = require("./db");
 
 const app = require("./app");
 
-const { DB_HOST, USERNAME, DB_NAME, DB_PORT, PORT = 8888 } = process.env;
-
-const sequelize = new Sequelize(DB_NAME, "root", "", {
-  host: DB_HOST,
-  port: DB_PORT,
-  dialect: "mariadb",
-});
+const { PORT = 8888 } = process.env;
 
 sequelize
   .authenticate()

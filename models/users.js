@@ -1,21 +1,15 @@
-const { DB_HOST, USERNAME, DB_NAME, DB_PORT, PORT = 3000 } = process.env;
-const { Sequelize, DataTypes } = require("sequelize");
+const { DataTypes } = require("sequelize");
+const sequelize = require("../db");
 
 const Unit = require("./units");
 const UsersType = require("./userstypes");
-
-const sequelize = new Sequelize(DB_NAME, "root", "", {
-  host: DB_HOST,
-  port: DB_PORT,
-  dialect: "mariadb",
-});
 
 const User = sequelize.define(
   "User",
   {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
+      // allowNull: false,
       primaryKey: true,
     },
     firstName: {

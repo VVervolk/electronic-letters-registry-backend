@@ -1,11 +1,5 @@
-const { DB_HOST, USERNAME, DB_NAME, DB_PORT, PORT = 3000 } = process.env;
-const { Sequelize, DataTypes } = require("sequelize");
-
-const sequelize = new Sequelize(DB_NAME, "root", "", {
-  host: DB_HOST,
-  port: DB_PORT,
-  dialect: "mariadb",
-});
+const sequelize = require("../db");
+const { DataTypes } = require("sequelize");
 
 const Unit = sequelize.define(
   "Unit",
