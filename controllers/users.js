@@ -17,7 +17,7 @@ const { SECRET_KEY } = process.env;
 
 async function getAllUsers(req, res) {
   const data = await User.findAll({
-    attributes: ["id", "firstName", "lastName", "email"],
+    attributes: ["id", "firstName", "lastName", "email", "position"],
     include: [
       {
         model: Unit,
