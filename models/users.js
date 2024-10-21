@@ -40,8 +40,11 @@ const User = sequelize.define(
     },
     userTypeId: {
       type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
       validate: { isNumeric: true },
+    },
+    position: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     token: {
       type: DataTypes.STRING,

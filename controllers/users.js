@@ -42,7 +42,7 @@ async function getAllUsers(req, res) {
 }
 
 async function addUser(req, res) {
-  const { email: userEmail } = req.body;
+  const { firstName, email: userEmail } = req.body;
   const user = await User.findOne({ where: { email: userEmail } });
   console.log(user);
 
@@ -57,6 +57,8 @@ async function addUser(req, res) {
     ...req.body,
     password: hashPassword,
   });
+
+  await sendEmail(userEmail, password, firstName);
 
   res.status(201).json({
     email: userEmail,
